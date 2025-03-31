@@ -7,3 +7,4 @@ const MessageSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("Message", MessageSchema);
+
