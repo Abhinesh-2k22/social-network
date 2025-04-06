@@ -153,10 +153,8 @@ const Explore = () => {
     
     try {
       if (followingMap[username]) {
-        // Unfollow
         await unfollowUser({ variables: { target: username } });
       } else {
-        // Follow
         await followUser({ variables: { target: username } });
       }
     } catch (error) {

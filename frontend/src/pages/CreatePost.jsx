@@ -39,8 +39,7 @@ const CreatePost = () => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      
-      // Create a preview URL for the image
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -58,11 +57,11 @@ const CreatePost = () => {
     }
 
     try {
-      // Create a FormData object to send the file
+
       const formData = new FormData();
-      formData.append('file', imageFile); // Use 'file' as the field name to match the backend
+      formData.append('file', imageFile); 
       
-      // First, upload the image to the server
+
       const uploadResponse = await fetch('http://localhost:4000/upload', {
         method: 'POST',
         body: formData,

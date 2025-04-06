@@ -14,30 +14,6 @@ const generateToken = (username) => jwt.sign({ username }, process.env.JWT_SECRE
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const storeFile = async (file) => {
-  const { createReadStream, filename } = await file;
-  const stream = createReadStream();
-
-  // Create a unique filename
-  const uniqueFilename = `${Date.now()}-${filename}`;
-  const uploadDir = path.join(__dirname, '../uploads');
-  const filePath = path.join(uploadDir, uniqueFilename);
-  
-  // Create a write stream
-  const writeStream = fs.createWriteStream(filePath);
-  
-  // Pipe the read stream to the write stream
-  stream.pipe(writeStream);
-  
-  // Wait for the stream to finish
-  await finished(writeStream);
-  
-  return {
-    filename: uniqueFilename,
-    path: filePath,
-    url: `/uploads/${uniqueFilename}`
-  };
-};
 
 export default {
   Upload: {
@@ -79,7 +55,7 @@ export default {
         username = context.user.username;
       }
       
-      // If still no username, throw an error
+      //no username, throw an error
       if (!username) {
         throw new Error("Username is required");
       }
@@ -93,7 +69,7 @@ export default {
         username = context.user.username;
       }
       
-      // If still no username, throw an error
+      // If no username, throw an error
       if (!username) {
         throw new Error("Username is required");
       }
@@ -113,7 +89,7 @@ export default {
         username = context.user.username;
       }
       
-      // If still no username, throw an error
+      // If no username, throw an error
       if (!username) {
         throw new Error("Username is required");
       }
@@ -167,7 +143,7 @@ export default {
       console.log("Searching for username:", username);
       if (!currentUsername) throw new Error("Unauthorized");
     
-      // Exact match (case-insensitive) using findOne, excluding current user
+      // match using findOne, excluding current user
       const result = await Profile.findOne({username});
       if (result && result.username === currentUsername) {
         return []; // Returning an empty array to align with the schema's [Profile] return type
@@ -175,39 +151,6 @@ export default {
       return result ? [result] : [];
     },
 
-
-    // async getRecommendations(_, __, context) {
-    //   // Get the current user's username from the context
-    //   const currentUsername = context.user?.username;
-    //   if (!currentUsername) throw new Error("Unauthorized");
-
-    //   const session = neo4jDriver.session();
-    //   try {
-    //     // Cypher query to find recommended users
-    //     const result = await session.run(
-    //       `
-    //       MATCH (current:User {username: $currentUsername})-[:FOLLOWS]->(followed:User)<-[:FOLLOWS]-(rec:User)
-    //       WHERE NOT (rec)-[:FOLLOWS]->(current)
-    //         AND NOT (current)-[:FOLLOWS]->(rec)
-    //         AND rec <> current
-    //       RETURN rec.username AS username, count(followed) AS mutualCount
-    //       ORDER BY mutualCount DESC
-    //       LIMIT 5
-    //       `,
-    //       { currentUsername }
-    //     );
-
-    //     // Extract usernames from the query result
-    //     const recommendedUsernames = result.records.map(record => record.get("username"));
-
-    //     // Fetch profiles from MongoDB
-    //     const recommendedProfiles = await Profile.find({ username: { $in: recommendedUsernames } });
-
-    //     return recommendedProfiles;
-    //   } finally {
-    //     session.close();
-    //   }
-    // },
     async getRecommendations(_, __, context) {
       // Get the current user's username from the context
       const currentUsername = context.user?.username;
@@ -284,19 +227,17 @@ export default {
 
       const token = generateToken(username);
       
-      // Set the auth token cookie with proper options
       res.cookie('authToken', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Only use secure in production
+        secure: process.env.NODE_ENV === 'production', 
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         path: '/',
-        domain: 'localhost' // Add domain for local development
+        domain: 'localhost' 
       });
       
       console.log("Token set in cookie:", token);
       
-      // Return the token in the response so the client can store it in memory
       return {
         success: true,
         token: token,
@@ -393,18 +334,18 @@ export default {
       const profile = await Profile.findOne({ username });
       if (!profile) throw new Error("Profile not found");
 
-      // Delete all posts by this user
+
       await Post.deleteMany({ owner: profile._id });
 
-      // Delete the profile from MongoDB
+
       await Profile.deleteOne({ username });
 
-      // Delete the user from Neo4j
+
       const session = neo4jDriver.session();
       await session.run("MATCH (u:User {username: $username}) DELETE u", { username });
       await session.close();
 
-      // Clear the authentication cookie
+
       res.clearCookie('authToken');
 
       return "Profile deleted successfully";
@@ -433,14 +374,14 @@ export default {
     
       const newPost = new Post({
         owner: profile._id,
-        imagePath, // This now comes directly as a path string
+        imagePath, 
         description,
         timestamp: new Date()
       });
       
       const savedPost = await newPost.save();
       
-      // Populate the owner field before returning
+
       return await Post.findById(savedPost._id).populate('owner');
     }
   },

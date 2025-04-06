@@ -36,9 +36,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-//gemini app.use(cors({}));
 app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend domain
+  origin: 'http://localhost:5173', 
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
@@ -61,7 +60,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 });
 
-// Update your context function in server.js
+
 const context = async ({ req, res }) => {
   // Get the token from cookie or authorization header
   const authCookie = req.cookies ? req.cookies.authToken : null;

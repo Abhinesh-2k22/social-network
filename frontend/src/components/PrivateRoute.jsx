@@ -1,8 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 
-// Query to check if the user is authenticated
-// We'll use a query that requires authentication
 const CHECK_AUTH = gql`
   query CheckAuth {
     getMyPosts {

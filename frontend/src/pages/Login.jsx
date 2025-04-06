@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { gql } from '@apollo/client';
 
-// Match the backend schema which expects username and password as separate parameters
+
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
     login(username: $username, password: $password) {
@@ -40,7 +40,7 @@ const Login = () => {
     e.preventDefault();
     setError('');
     
-    // Pass username and password as separate parameters
+
     login({ 
       variables: { username, password },
       onError: (error) => {

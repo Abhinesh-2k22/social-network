@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 
-// Query to get the current user's profile
+
 const GET_CURRENT_USER = gql`
   query GetCurrentUser {
     getUserProfile {
@@ -19,7 +19,7 @@ const GET_CURRENT_USER = gql`
   }
 `;
 
-// Mutation to log out
+
 const LOGOUT_MUTATION = gql`
   mutation Logout {
     logout
@@ -31,7 +31,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const [currentUsername, setCurrentUsername] = useState(null);
   
-  // Get current user from GraphQL query
+
   const { loading, error } = useQuery(GET_CURRENT_USER, {
     onCompleted: (data) => {
       if (data?.getUserProfile) {
@@ -47,10 +47,10 @@ const Layout = () => {
   
   const [logout] = useMutation(LOGOUT_MUTATION, {
     onCompleted: () => {
-      // Clear the auth token cookie
+
       document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost";
       
-      // Redirect to login
+
       navigate('/login');
     },
     onError: (error) => {

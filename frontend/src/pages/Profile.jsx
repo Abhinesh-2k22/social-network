@@ -164,7 +164,6 @@ const Profile = () => {
         setIsFollowing(isFollowing);
       }
       
-      // Log follower and following data
       console.log('Followers data:', data?.getFollowers);
       console.log('Following data:', data?.getFollowing);
     },
@@ -210,7 +209,7 @@ const Profile = () => {
     }
   });
   
-  // Mutations
+
   const [followUser] = useMutation(FOLLOW_USER, {
     onCompleted: (data) => {
       console.log('Follow successful:', data);
@@ -474,7 +473,7 @@ const Profile = () => {
         </div>
       </div>
       
-      {/* Edit Profile Modal */}
+
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -517,7 +516,7 @@ const Profile = () => {
         </div>
       )}
       
-      {/* Confirm Delete Modal */}
+
       {showConfirmDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -543,7 +542,7 @@ const Profile = () => {
         </div>
       )}
       
-      {/* Followers Modal */}
+
       {showFollowers && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
@@ -584,7 +583,7 @@ const Profile = () => {
         </div>
       )}
       
-      {/* Following Modal */}
+
       {showFollowing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">

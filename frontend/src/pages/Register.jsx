@@ -18,10 +18,7 @@ const Register = () => {
 
   const [register, { loading }] = useMutation(REGISTER_MUTATION, {
     onCompleted: (data) => {
-      // The backend returns a string "Registration successful"
-      // We need to log in after registration
       console.log('Registration successful:', data);
-      // Navigate to login page to log in
       navigate('/login');
     },
     onError: (error) => {
@@ -34,7 +31,7 @@ const Register = () => {
     e.preventDefault();
     setError('');
     
-    // Pass username and password as separate parameters
+
     register({ 
       variables: { username, password },
       onError: (error) => {

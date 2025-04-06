@@ -17,7 +17,7 @@ const Post = ({ post, refetch, isCurrentUserProfile }) => {
   
   const [deletePost] = useMutation(DELETE_POST, {
     onCompleted: () => {
-      // Call refetch function to refresh the data
+
       if (refetch) {
         console.log('Refetching data after post deletion');
         refetch();
@@ -29,7 +29,7 @@ const Post = ({ post, refetch, isCurrentUserProfile }) => {
   });
 
   useEffect(() => {
-    // Try to get user from localStorage
+
     const user = localStorage.getItem('user');
     if (user) {
       try {
@@ -57,14 +57,14 @@ const Post = ({ post, refetch, isCurrentUserProfile }) => {
     }
   };
 
-  // Safely format the timestamp
+
   const formatTimestamp = (timestamp) => {
     try {
       if (!timestamp) return 'Unknown time';
       
       let date;
       
-      // Check if timestamp is a number (milliseconds since epoch)
+
       if (typeof timestamp === 'number' || /^\d+$/.test(timestamp)) {
         // Convert to milliseconds if it's in seconds
         const ms = timestamp.toString().length === 10 ? timestamp * 1000 : timestamp;
