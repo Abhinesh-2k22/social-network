@@ -11,12 +11,6 @@ export default gql`
     description: String
   }
   
-  type Message {
-    _id: ID!
-    owner: Profile!
-    message: String!
-    timestamp: String!
-  }
   
   type Post {
     _id: ID!
@@ -39,24 +33,32 @@ export default gql`
     error: String
   }
   
+  type LoginResponse {
+    success: Boolean!
+    token: String!
+    username: String!
+  }
+  
   type Query {
     getPostsForFollowers: [Post]
-    getUserProfile(username: String!): Profile
-    getFollowers(username: String!): [String]
-    getFollowing(username: String!): [String]
-    getMessages(username: String!): [Message]
+    getUserProfile(username: String): Profile
+    getFollowers(username: String): [String]
+    getFollowing(username: String): [String]
     getRecommendations: [Profile]
+    getMyPosts: [Post] 
+    searchUser(username: String!): [Profile] 
+    getPostsByUser(userId: ID!): [Post]
   }
   
   type Mutation {
     register(username: String!, password: String!): String
-    login(username: String!, password: String!): String
+    login(username: String!, password: String!): LoginResponse
     updateProfile(profile_photo: String, description: String): Profile
     followUser(target: String!): String
     unfollowUser(target: String!): String
-    sendMessage(message: String!): Message
-    deleteMessage(messageId: ID!): String
     logout: String
     createPost(imagePath: String!, description: String): Post
+    deleteProfile: String 
+    deletePost(postId: ID!): String 
   }
 `;
