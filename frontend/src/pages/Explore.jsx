@@ -213,7 +213,7 @@ const Explore = () => {
                   className="w-12 h-12 rounded-full mr-4"
                 />
                 <div>
-                  <h3 className="font-medium">{user.username}</h3>
+                  <h3 className="font-medium pr-10">{user.username}</h3>
                   {user.description && (
                     <p className="text-sm text-gray-500">{user.description}</p>
                   )}

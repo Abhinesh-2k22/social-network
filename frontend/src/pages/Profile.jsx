@@ -395,7 +395,7 @@ const Profile = () => {
               className="w-20 h-20 rounded-full mr-4"
             />
             <div>
-              <h1 className="text-2xl font-bold">{profile.username}</h1>
+              <h1 className="text-2xl font-bold text-black pr-10">{profile.username}</h1>
               {profile.description && (
                 <p className="text-gray-600 mt-1">{profile.description}</p>
               )}
@@ -520,14 +520,14 @@ const Profile = () => {
       {showConfirmDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Delete Profile</h2>
-            <p className="mb-4">
+            <h2 className="text-xl text-black font-bold mb-4">Delete Profile</h2>
+            <p className="mb-4 text-black">
               Are you sure you want to delete your profile? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setShowConfirmDelete(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                className="px-4 py-2 bg-gray-500 rounded hover:bg-gray-300"
               >
                 Cancel
               </button>
@@ -547,7 +547,7 @@ const Profile = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Followers</h2>
+              <h2 className="text-xl font-bold text-black">Followers</h2>
               <button
                 onClick={handleCloseModal}
                 className="p-1 rounded-full hover:bg-gray-100"
@@ -588,7 +588,7 @@ const Profile = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Following</h2>
+              <h2 className="text-xl font-bold text-black">Following</h2>
               <button
                 onClick={handleCloseModal}
                 className="p-1 rounded-full hover:bg-gray-100"

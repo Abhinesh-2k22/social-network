@@ -1,7 +1,7 @@
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import cors from "cors";
-import multer from "multer"; // Install with: npm install multer
+import multer from "multer";
 import dotenv from "dotenv";
 import typeDefs from "./graphql/schema.js";
 import resolvers from "./graphql/resolvers.js";
