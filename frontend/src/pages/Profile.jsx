@@ -41,6 +41,13 @@ const GET_POSTS_BY_USER = gql`
       imagePath
       description
       timestamp
+      likes
+      likeCount
+      comments {
+        username
+        comment
+        timestamp
+      }
       owner {
         _id
         username

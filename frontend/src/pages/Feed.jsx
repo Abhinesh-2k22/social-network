@@ -19,6 +19,13 @@ const GET_POSTS = gql`
       imagePath
       description
       timestamp
+      likes
+      likeCount
+      comments {
+        username
+        comment
+        timestamp
+      }
       owner {
         _id
         username
@@ -47,7 +54,7 @@ const Feed = () => {
   });
 
   // Query to get posts once we have the current user
-  const { loading: postsLoading, error: postsError, data: postsData } = useQuery(GET_POSTS, {
+  const { loading: postsLoading, error: postsError, data: postsData, refetch: refetchPosts } = useQuery(GET_POSTS, {
     skip: !currentUser,
   });
 
@@ -76,8 +83,8 @@ const Feed = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Your Feed</h1>
-      <PostList posts={posts} />
+      <h5 className="text-2xl font-bold mb-6 text-black ">Your Feed</h5>
+      <PostList posts={posts} refetch={refetchPosts} />
     </div>
   );
 };

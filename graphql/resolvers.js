@@ -25,9 +25,14 @@ export default {
       return { filename, mimetype, encoding, path: file };
     },
   },
+  Post: {
+    likeCount: (parent) => {
+      return parent.likes ? parent.likes.length : 0;
+    }
+  },
   Query: {
-    async getPostsForFollowers(_, __, context) {
-      const username = context.user?.username;
+    async getPostsForFollowers(_, __, { user }) {
+      const username = user?.username;
       if (!username) throw new Error("Unauthorized");
 
       const profile = await Profile.findOne({ username });
@@ -49,10 +54,10 @@ export default {
       // Retrieve posts from these followed users
       return await Post.find({ owner: { $in: followedProfileIds } }).populate('owner').sort({ timestamp: 'desc' });
     },
-    async getUserProfile(_, { username }, context) {
+    async getUserProfile(_, { username }, { user }) {
       // If username is not provided, use the current user's username from context
-      if (!username && context.user?.username) {
-        username = context.user.username;
+      if (!username && user?.username) {
+        username = user.username;
       }
       
       //no username, throw an error
@@ -63,10 +68,10 @@ export default {
       return await Profile.findOne({ username });
     },
 
-    async getFollowers(_, { username }, context) {
+    async getFollowers(_, { username }, { user }) {
       // If username is not provided, use the current user's username from context
-      if (!username && context.user?.username) {
-        username = context.user.username;
+      if (!username && user?.username) {
+        username = user.username;
       }
       
       // If no username, throw an error
@@ -83,10 +88,10 @@ export default {
       return result.records.map((r) => r.get("f.username"));
     },
 
-    async getFollowing(_, { username }, context) {
+    async getFollowing(_, { username }, { user }) {
       // If username is not provided, use the current user's username from context
-      if (!username && context.user?.username) {
-        username = context.user.username;
+      if (!username && user?.username) {
+        username = user.username;
       }
       
       // If no username, throw an error
@@ -102,8 +107,8 @@ export default {
       session.close();
       return result.records.map((r) => r.get("f.username"));
     },
-    async getMyPosts(_, __, context) {
-      const username = context.user?.username;
+    async getMyPosts(_, __, { user }) {
+      const username = user?.username;
       if (!username) throw new Error("Unauthorized");
 
       const profile = await Profile.findOne({ username });
@@ -112,9 +117,9 @@ export default {
       return await Post.find({ owner: profile._id }).populate('owner').sort({ timestamp: 'desc' });
     },
 
-    async getPostsByUser(_, { userId }, context) {
+    async getPostsByUser(_, { userId }, { user }) {
       // Check if user is authenticated
-      if (!context.user?.username) {
+      if (!user?.username) {
         console.log("Unauthorized: No user in context");
         throw new Error("Unauthorized");
       }
@@ -137,8 +142,8 @@ export default {
       return posts;
     },
 
-    async searchUser(_, { username }, context) {
-      const currentUsername = context.user?.username;
+    async searchUser(_, { username }, { user }) {
+      const currentUsername = user?.username;
       console.log("Current username:", currentUsername);
       console.log("Searching for username:", username);
       if (!currentUsername) throw new Error("Unauthorized");
@@ -151,9 +156,9 @@ export default {
       return result ? [result] : [];
     },
 
-    async getRecommendations(_, __, context) {
+    async getRecommendations(_, __, { user }) {
       // Get the current user's username from the context
-      const currentUsername = context.user?.username;
+      const currentUsername = user?.username;
       if (!currentUsername) throw new Error("Unauthorized");
     
       const session = neo4jDriver.session();
@@ -245,8 +250,8 @@ export default {
       };
     },
 
-    async logout(_, __, context) {
-      const auth = context.req.headers.authorization || "";
+    async logout(_, __, { req }) {
+      const auth = req.headers.authorization || "";
       const token = auth.replace("Bearer ", "");
 
       if (!token) return "No token found";
@@ -267,8 +272,8 @@ export default {
       }
     },
 
-    async updateProfile(_, { profile_photo, description }, context) {
-      const username = context.user?.username;
+    async updateProfile(_, { profile_photo, description }, { user }) {
+      const username = user?.username;
       if (!username) throw new Error("Not authenticated");
 
       return await Profile.findOneAndUpdate(
@@ -278,8 +283,8 @@ export default {
       );
     },
 
-    async followUser(_, { target }, context) {
-      const username = context.user?.username;
+    async followUser(_, { target }, { user }) {
+      const username = user?.username;
       if (!username) throw new Error("Unauthorized");
 
       if (username === target) {
@@ -315,8 +320,8 @@ export default {
       return "Followed successfully";
     },
 
-    async unfollowUser(_, { target }, context) {
-      const username = context.user?.username;
+    async unfollowUser(_, { target }, { user }) {
+      const username = user?.username;
       if (!username) throw new Error("Unauthorized");
 
       const session = neo4jDriver.session();
@@ -365,8 +370,8 @@ export default {
       return "Post deleted successfully";
     },
 
-    async createPost(_, { imagePath, description }, context) {
-      const username = context.user?.username;
+    async createPost(_, { imagePath, description }, { user }) {
+      const username = user?.username;
       if (!username) throw new Error("Unauthorized");
     
       const profile = await Profile.findOne({ username });
@@ -383,6 +388,61 @@ export default {
       
 
       return await Post.findById(savedPost._id).populate('owner');
+    },
+
+    async likePost(_, { postId }, { user }) {
+      const username = user?.username;
+      if (!username) throw new Error("Unauthorized");
+
+      const post = await Post.findById(postId);
+      if (!post) throw new Error("Post not found");
+
+      // Check if user already liked the post
+      if (post.likes && post.likes.includes(username)) {
+        throw new Error("Post already liked");
+      }
+
+      // Add username to likes array
+      post.likes = post.likes || [];
+      post.likes.push(username);
+      await post.save();
+
+      return await Post.findById(postId).populate('owner');
+    },
+
+    async unlikePost(_, { postId }, { user }) {
+      const username = user?.username;
+      if (!username) throw new Error("Unauthorized");
+
+      const post = await Post.findById(postId);
+      if (!post) throw new Error("Post not found");
+
+      // Remove username from likes array
+      if (post.likes) {
+        post.likes = post.likes.filter(like => like !== username);
+        await post.save();
+      }
+
+      return await Post.findById(postId).populate('owner');
+    },
+
+    async addComment(_, { postId, comment }, { user }) {
+      const username = user?.username;
+      if (!username) throw new Error("Unauthorized");
+
+      const post = await Post.findById(postId);
+      if (!post) throw new Error("Post not found");
+
+      // Add comment to comments array
+      post.comments = post.comments || [];
+      post.comments.push({
+        username,
+        comment,
+        timestamp: new Date()
+      });
+      await post.save();
+
+      return await Post.findById(postId).populate('owner');
     }
   },
 };

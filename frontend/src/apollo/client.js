@@ -36,14 +36,9 @@ const loggingLink = new ApolloLink((operation, forward) => {
 
 // Add auth link to handle additional authorization if needed
 const authLink = setContext((_, { headers }) => {
-  // Get the token from localStorage if it exists
-  const token = localStorage.getItem('token');
-  
   return {
     headers: {
       ...headers,
-      // Add the token to the Authorization header if it exists
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     // Ensure credentials are included
     credentials: 'include',

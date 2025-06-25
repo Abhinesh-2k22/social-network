@@ -11,6 +11,11 @@ export default gql`
     description: String
   }
   
+  type Comment {
+    username: String!
+    comment: String!
+    timestamp: String!
+  }
   
   type Post {
     _id: ID!
@@ -18,6 +23,9 @@ export default gql`
     imagePath: String!
     description: String
     timestamp: String!
+    likes: [String]!
+    comments: [Comment]!
+    likeCount: Int!
   }
   
   type User {
@@ -60,5 +68,8 @@ export default gql`
     createPost(imagePath: String!, description: String): Post
     deleteProfile: String 
     deletePost(postId: ID!): String 
+    likePost(postId: ID!): Post
+    unlikePost(postId: ID!): Post
+    addComment(postId: ID!, comment: String!): Post
   }
 `;
